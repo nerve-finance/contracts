@@ -17,7 +17,7 @@ contract LPToken is ERC20Burnable, Ownable {
 
     // Address of the swap contract that owns this LP token. When a user adds liquidity to the swap contract,
     // they receive a proportionate amount of this LPToken.
-    ISwap public swap;
+    ISwap public immutable swap;
 
     /**
      * @notice Deploys LPToken contract with given name, symbol, and decimals

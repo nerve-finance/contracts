@@ -872,18 +872,18 @@ library SwapUtils {
         );
 
         uint256[] memory fees = new uint256[](self.pooledTokens.length);
-
+        uint256 lpTotalSupply = self.lpToken.totalSupply();
         // current state
         AddLiquidityInfo memory v = AddLiquidityInfo(0, 0, 0, 0);
 
-        if (self.lpToken.totalSupply() != 0) {
+        if (lpTotalSupply != 0) {
             v.d0 = getD(self);
         }
         uint256[] memory newBalances = self.balances;
 
         for (uint256 i = 0; i < self.pooledTokens.length; i++) {
             require(
-                self.lpToken.totalSupply() != 0 || amounts[i] > 0,
+                lpTotalSupply != 0 || amounts[i] > 0,
                 "Must supply all tokens in pool"
             );
 
@@ -913,7 +913,7 @@ library SwapUtils {
 
         // updated to reflect fees and calculate the user's LP tokens
         v.d2 = v.d1;
-        if (self.lpToken.totalSupply() != 0) {
+        if (lpTotalSupply != 0) {
             uint256 feePerToken = _feePerToken(self);
             for (uint256 i = 0; i < self.pooledTokens.length; i++) {
                 uint256 idealBalance = v.d1.mul(self.balances[i]).div(v.d0);
@@ -934,10 +934,10 @@ library SwapUtils {
         uint256 toMint;
         uint256 toMintFee;
         uint256 toMintUser;
-        if (self.lpToken.totalSupply() == 0) {
+        if (lpTotalSupply == 0) {
             toMint = v.d1;
         } else {
-            toMint = v.d2.sub(v.d0).mul(self.lpToken.totalSupply()).div(v.d0);
+            toMint = v.d2.sub(v.d0).mul(lpTotalSupply).div(v.d0);
         }
 
         require(toMint >= minToMint, "Couldn't mint min requested");
@@ -957,7 +957,7 @@ library SwapUtils {
             amounts,
             fees,
             v.d1,
-            self.lpToken.totalSupply()
+            lpTotalSupply + toMint
         );
 
         return toMint;
@@ -1321,6 +1321,7 @@ library SwapUtils {
 
     function setDevAddress(Swap storage self, address _devaddr) public {
         require(msg.sender == self.devaddr, "dev: wut?");
+        require(msg.sender != address(0), "invalid address");
         self.devaddr = _devaddr;
     }
 }

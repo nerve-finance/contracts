@@ -16,7 +16,7 @@ contract xNerve is ERC20("xNerve", "xNRV"){
         nerve = _nerve;
     }
 
-    // Enter the bar. Pay some SUSHIs. Earn some shares.
+    // Enter the bar. Pay some Nerves. Earn some shares.
     // Locks Nerve and mints xNerve
     function enter(uint256 _amount) public {
         // Gets the amount of Nerve locked in the contract
